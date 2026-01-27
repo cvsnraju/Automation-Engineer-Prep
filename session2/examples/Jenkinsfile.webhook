@@ -1,0 +1,62 @@
+// Jenkinsfile with webhook trigger and parameters
+pipeline {
+  agent any
+
+  triggers {
+    githubPush()  // or use 'gitlabPush()' for Gitlab
+  }
+
+  parameters {
+    string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch')
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'prod'], description: 'Deploy to')
+  }
+
+  environment {
+    REGISTRY = 'docker.io'
+    IMAGE_TAG = "${BUILD_NUMBER}"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo "Cloning from branch: ${params.BRANCH}"
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: "*/${params.BRANCH}"]],
+          userRemoteConfigs: [[url: 'https://github.com/your-repo.git']]
+        ])
+      }
+    }
+
+    stage('Build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
+
+    stage('Test') {
+      steps {
+        sh 'mvn test'
+      }
+    }
+
+    stage('Deploy') {
+      when {
+        branch 'main'
+      }
+      steps {
+        echo "Deploying to ${params.ENVIRONMENT}..."
+        // Add deployment commands here
+      }
+    }
+  }
+
+  post {
+    always {
+      junit 'target/surefire-reports/**/*.xml'
+    }
+    failure {
+      echo 'Pipeline failed. Check logs above.'
+    }
+  }
+}

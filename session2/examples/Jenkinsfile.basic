@@ -1,0 +1,45 @@
+// Basic Jenkinsfile for Maven project
+pipeline {
+  agent any
+
+  environment {
+    JAVA_HOME = '/usr/lib/jvm/java-11'
+    MAVEN_HOME = '/usr/share/maven'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo 'Checking out code...'
+        checkout scm
+      }
+    }
+
+    stage('Build') {
+      steps {
+        echo 'Building project...'
+        sh 'mvn clean package -DskipTests'
+      }
+    }
+
+    stage('Test') {
+      steps {
+        echo 'Running tests...'
+        sh 'mvn test'
+      }
+    }
+  }
+
+  post {
+    always {
+      junit 'target/surefire-reports/**/*.xml'
+      archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
+    }
+    failure {
+      echo 'Build FAILED!'
+    }
+    success {
+      echo 'Build SUCCESS!'
+    }
+  }
+}
