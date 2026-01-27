@@ -17,10 +17,10 @@ public class StepDefinitions {
 
     @Given("the mock API server is running")
     public void the_mock_api_server_is_running() {
-        // no-op: assume user started the server; could add a health check here
+        // assume server is started by user; optionally implement a health check
     }
 
-    @When("I GET \"{string}\"")
+    @When("I GET {string}")
     public void i_get(String path) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(base + path)).GET().build();
@@ -34,7 +34,7 @@ public class StepDefinitions {
         Assert.assertEquals(expectedStatus.intValue(), lastResponse.statusCode());
     }
 
-    @Then("the response field \"{string}\" should be {int}")
+    @Then("the response field {string} should be {int}")
     public void the_response_field_should_be(String key, Integer expected) {
         Assert.assertNotNull(lastBody);
         int actual = extractInt(lastBody, key);
