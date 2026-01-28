@@ -7,6 +7,16 @@ Annotations
 - `@BeforeMethod`, `@AfterMethod`
 - `@Test` (with `groups`, `priority`, `dependsOnMethods`)
 
+
+@BeforeMethod    // Runs before each @Test method
+@AfterMethod     // Runs after each @Test method
+@BeforeClass     // Runs once before all tests in class
+@AfterClass      // Runs once after all tests in class
+@Test            // Marks method as a test case
+@DataProvider    // Provides test data
+@Parameters      // Receives parameters from XML/annotations
+@Ignore          // Skips test execution
+
 Grouping
 - Use `groups` attribute on `@Test` and run with a TestNG XML including `<groups>`.
 
