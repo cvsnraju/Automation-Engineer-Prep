@@ -22,7 +22,7 @@ public class TestNGExample {
         System.out.println("BeforeMethod - start test");
     }
 
-    @Test(groups = {"fast"})
+    @Test(groups = {"https test"})
     public void simpleAssertion() {
         Assert.assertTrue(1 + 1 == 2, "Basic math should work");
     }
@@ -45,7 +45,7 @@ public class TestNGExample {
     // New: API tests that call the Java mock API server at http://localhost:4568
     private final String base = "http://localhost:4568";
 
-    @Test(groups = {"api"})
+    @Test(groups = {"test case for api - cse"})
     public void testCseApi() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(base + "/api/cse")).GET().build();
@@ -58,7 +58,7 @@ public class TestNGExample {
         Assert.assertTrue(avail >= 0, "availableToday should be >= 0");
     }
 
-    @Test(groups = {"api"})
+    @Test(groups = {"test case for api - it"})
     public void testItApi() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(base + "/api/it")).GET().build();

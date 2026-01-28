@@ -37,6 +37,23 @@ public class MockApiServer {
             );
             return gson.toJson(d);
         });
+
+
+        get("/api/eee", (req, res) -> {
+            res.type("application/json");
+            Department d = new Department(
+                    "IT",
+                    "Mr. EEE head ",
+                    210,
+                    18,
+                    7,
+                    new String[]{"circuits", "charges"}
+            );
+            return gson.toJson(d);
+        });
+
+
+
     }
 
     public static void stopServer() {

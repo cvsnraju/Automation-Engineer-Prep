@@ -28,3 +28,13 @@ Updated TestNG example
 
 openjdk 25.0.2 2026-01-20
 Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)
+
+
+## HTTP codes
+
+2XX 3XX 4XX 5XX
+
+
+CRUD ->  Create Retreive Update Delete -> GET POST PUT DELETE PATCH UPDATE
+
+
