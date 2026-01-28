@@ -24,3 +24,7 @@ Updated TestNG example
 - File: `session1/examples/TestNGExample.java`
 - These tests call `http://localhost:4568/api/cse` and `/api/it` and assert `facultyCount` and `availableToday`.
 - To run the TestNG example, either run it from your IDE (ensure Java 11) or add TestNG to a Maven project and execute the `api` group.
+
+
+openjdk 25.0.2 2026-01-20
+Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)

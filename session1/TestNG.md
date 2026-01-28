@@ -30,3 +30,5 @@ Assertions
 - Use `org.testng.Assert` methods: `assertEquals`, `assertTrue`, `assertFalse`, `assertNull`, `assertNotNull`.
 
 See `examples/TestNGExample.java` for a compact example covering annotations, grouping, parameters, data provider, and assertions.
+
+https://testng.org
