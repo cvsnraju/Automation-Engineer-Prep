@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-automation
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $(pwd):/workspace
+    environment:
+      - JENKINS_OPTS=--httpPort=8080
+      - JAVA_OPTS=-Xmx1024m -Xms512m
+    networks:
+      - jenkins-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Optional: Mock API Server for integration tests
+  mock-api:
+    image: openjdk:11
+    container_name: mock-api-server
+    working_dir: /app
+    volumes:
+      - $(pwd)/Assignments/session1/mock-api-server:/app
+    ports:
+      - "8081:8081"
+    command: mvn compile exec:java -Dexec.mainClass="session1.mockapi.MockApiServer"
+    networks:
+      - jenkins-network
+    depends_on:
+      jenkins:
+        condition: service_healthy
+    environment:
+      - MAVEN_OPTS=-Xmx512m -Xms256m
+    restart: unless-stopped
+
+networks:
+  jenkins-network:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+    driver: local
