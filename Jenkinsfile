@@ -42,7 +42,8 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: '*/main'], [name: '*/develop']],
                     userRemoteConfigs: [[
-                        url: 'https://github.com/cvsnraju/Automation-Engineer-Prep.git' # update username as per your GitHub account
+                        url: 'https://github.com/cvsnraju/Automation-Engineer-Prep.git' 
+                        //  update username as per your GitHub account
                     ]]
                 ])
                 sh 'git log --oneline -5'
