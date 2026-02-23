@@ -28,10 +28,10 @@ pipeline {
     
     environment {
         WORKSPACE_PATH = "${WORKSPACE}"
-        // Set PATH to include homebrew tools
-        PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-        BUILD_TIMESTAMP = sh(script: "date +'%Y%m%d_%H%M%S'", returnStdout: true).trim()
-    }
+    // Use absolute paths to ensure tools are found regardless of Jenkins user context
+    JAVA_HOME = "/opt/homebrew/opt/openjdk"
+    MAVEN_HOME = "/opt/homebrew/Cellar/maven/3.9.12/libexec"
+    PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/openjdk/bin:${MAVEN_HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     
     stages {
         stage('Checkout Code') {
@@ -71,17 +71,19 @@ pipeline {
             steps {
                 echo "========== Building Maven projects =========="
                 sh '''
-                    # Check if Maven is available
+                    # Use absolute path to Maven if not found in PATH
                     if ! command -v mvn &> /dev/null; then
-                        echo "⚠️  Maven not found. Installing Maven..."
-                        brew install maven || echo "Failed to install Maven"
+                        echo "⚠️  Maven not in PATH, using absolute path..."
+                        export MVN="/opt/homebrew/Cellar/maven/3.9.12/libexec/bin/mvn"
+                    else
+                        export MVN="mvn"
                     fi
                     
                     # Build examples-runner if directory exists
                     if [ -d "Assignments/session1/examples-runner" ]; then
                         echo "Building examples-runner..."
                         cd Assignments/session1/examples-runner
-                        mvn clean package -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
+                        $MVN clean package -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
                         cd - > /dev/null
                     else
                         echo "⚠️  examples-runner directory not found"
@@ -91,7 +93,7 @@ pipeline {
                     if [ -d "Assignments/session1/mock-api-server" ]; then
                         echo "Building mock-api-server..."
                         cd Assignments/session1/mock-api-server
-                        mvn clean install -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
+                        $MVN clean install -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
                         cd - > /dev/null
                     else
                         echo "⚠️  mock-api-server directory not found"
