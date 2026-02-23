@@ -169,6 +169,7 @@ pipeline {
                     echo "Running findbugs and checkstyle..."
                     # Can be extended with SonarQube, Checkstyle, etc.
                     find ${WORKSPACE} -name "*.java" -type f | wc -l
+                    echo "this is demo statement to test the pipeline"
                 '''
             }
         }
