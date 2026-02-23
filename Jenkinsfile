@@ -28,10 +28,12 @@ pipeline {
     
     environment {
         WORKSPACE_PATH = "${WORKSPACE}"
-    // Use absolute paths to ensure tools are found regardless of Jenkins user context
-    JAVA_HOME = "/opt/homebrew/opt/openjdk"
-    MAVEN_HOME = "/opt/homebrew/Cellar/maven/3.9.12/libexec"
-    PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/openjdk/bin:${MAVEN_HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        // Use absolute paths to ensure tools are found regardless of Jenkins user context
+        JAVA_HOME = "/opt/homebrew/opt/openjdk"
+        MAVEN_HOME = "/opt/homebrew/Cellar/maven/3.9.12/libexec"
+        PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/Cellar/maven/3.9.12/libexec/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        BUILD_TIMESTAMP = sh(script: "date +'%Y%m%d_%H%M%S'", returnStdout: true).trim()
+    }
     
     stages {
         stage('Checkout Code') {
