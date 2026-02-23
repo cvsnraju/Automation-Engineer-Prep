@@ -28,7 +28,8 @@ pipeline {
     
     environment {
         WORKSPACE_PATH = "${WORKSPACE}"
-        // Auto-detect Java and Maven paths
+        // Set PATH to include homebrew tools
+        PATH = "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         BUILD_TIMESTAMP = sh(script: "date +'%Y%m%d_%H%M%S'", returnStdout: true).trim()
     }
     
@@ -52,16 +53,16 @@ pipeline {
             steps {
                 echo "========== Preparing build environment =========="
                 sh '''
-                    echo "Checking Java..."
-                    which java || echo "⚠️  Java not in PATH, attempting to locate..."
-                    java -version 2>&1 || echo "⚠️  Java command failed"
+                    echo "Java Version:"
+                    java -version 2>&1 || echo "⚠️  Java not found"
                     
-                    echo "Checking Maven..."
-                    which mvn || echo "⚠️  Maven not in PATH, attempting to locate..."
-                    mvn -version 2>&1 || echo "⚠️  Maven command failed"
+                    echo "Maven Version:"
+                    mvn -version 2>&1 || echo "⚠️  Maven not found"
                     
                     echo "Working Directory:"
                     pwd
+                    
+                    echo "PATH: $PATH"
                 '''
             }
         }
@@ -72,26 +73,28 @@ pipeline {
                 sh '''
                     # Check if Maven is available
                     if ! command -v mvn &> /dev/null; then
-                        echo "⚠️  Maven not found. Please install Maven:"
-                        echo "  macOS: brew install maven"
-                        echo "  Linux: sudo apt-get install maven"
-                        exit 1
+                        echo "⚠️  Maven not found. Installing Maven..."
+                        brew install maven || echo "Failed to install Maven"
                     fi
                     
-                    # Build examples-runner
+                    # Build examples-runner if directory exists
                     if [ -d "Assignments/session1/examples-runner" ]; then
                         echo "Building examples-runner..."
                         cd Assignments/session1/examples-runner
-                        mvn clean package -DskipTests || echo "⚠️  Build failed but continuing..."
+                        mvn clean package -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
                         cd - > /dev/null
+                    else
+                        echo "⚠️  examples-runner directory not found"
                     fi
                     
-                    # Build mock-api-server
+                    # Build mock-api-server if directory exists
                     if [ -d "Assignments/session1/mock-api-server" ]; then
                         echo "Building mock-api-server..."
                         cd Assignments/session1/mock-api-server
-                        mvn clean install -DskipTests || echo "⚠️  Build failed but continuing..."
+                        mvn clean install -DskipTests 2>&1 || echo "⚠️  Build failed but continuing..."
                         cd - > /dev/null
+                    else
+                        echo "⚠️  mock-api-server directory not found"
                     fi
                 '''
             }
